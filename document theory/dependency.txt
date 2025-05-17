@@ -1,0 +1,4 @@
+1 add outh server dependency
+2 spring configuration processor
+3 lombork
+4 spring web 
