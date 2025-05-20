@@ -27,8 +27,14 @@ public class AccountService implements UserDetailsService{
     private PasswordEncoder passwordEncoder;
     public Account save(Account account){
         account.setPassword(passwordEncoder.encode(account.getPassword()));
+        if(account.getRole()==null){
+            account.setRole("ROLE_USER");
+        }
         return accountRepository.save(account);
+    }
 
+    public List<Account> findall(){
+        return accountRepository.findAll();
     }
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
