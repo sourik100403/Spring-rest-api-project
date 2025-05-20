@@ -17,7 +17,7 @@ public class HomeController {
 
     @GetMapping("/test")
     @Tag(name="Test",description="The Test Api")
-    @SecurityRequirement(name="sourikspring-demo")
+    @SecurityRequirement(name="sourikspring-demo") //for passing bearer token
     public String test(){
         return "test api";
     }   

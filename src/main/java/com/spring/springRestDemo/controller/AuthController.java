@@ -14,6 +14,7 @@ import com.spring.springRestDemo.util.constants.AccountSuccess;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -90,7 +91,10 @@ public class AuthController {
      //get all user api
     @GetMapping(value="/users",produces = "application/json")
     @Operation(summary = "List user api")
+    @ApiResponse(responseCode = "401",description = "Token missing")
     @ApiResponse(responseCode = "200",description = "List of users")
+    @ApiResponse(responseCode = "403",description = "Token error")
+    @SecurityRequirement(name="sourikspring-demo") //for passing bearer token
     public List<AccountViewDTO> users(){
         List<AccountViewDTO> accounts=new ArrayList<>();
         for(Account account:accountService.findall()){

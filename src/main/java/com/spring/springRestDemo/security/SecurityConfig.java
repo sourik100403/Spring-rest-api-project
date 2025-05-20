@@ -83,7 +83,14 @@ public class SecurityConfig {
             .securityMatcher("/**")
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/test").authenticated()
-                .requestMatchers("/", "/token", "/swagger-ui/**", "/v3/api-docs/**","/db-console/**").permitAll()
+                .requestMatchers("/auth/users").hasAuthority("SCOPE_ROLE_USER")
+                .requestMatchers("/", 
+                "/auth/token", 
+                "/auth/users/add", 
+                "/swagger-ui/**", 
+                "/v3/api-docs/**",
+                "/db-console/**"
+                ).permitAll()
                 .anyRequest().permitAll()
             )
             .oauth2ResourceServer(oauth2 -> oauth2
