@@ -83,7 +83,8 @@ public class SecurityConfig {
             .securityMatcher("/**")
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/test").authenticated()
-                .requestMatchers("/auth/users").hasAuthority("SCOPE_ROLE_USER")
+                .requestMatchers("/auth/users").hasAuthority("SCOPE_ADMIN")
+                .requestMatchers("/auth/profile").authenticated()
                 .requestMatchers("/", 
                 "/auth/token", 
                 "/auth/users/add", 
