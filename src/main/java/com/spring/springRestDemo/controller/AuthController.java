@@ -28,7 +28,7 @@ public class AuthController {
     @ResponseBody
     public Token token(@RequestBody UserLogin userLogin) throws AuthenticationException {
         Authentication authentication=authenticationManager
-        .authenticate(new UsernamePasswordAuthenticationToken(userLogin.username(), userLogin.password()));
+        .authenticate(new UsernamePasswordAuthenticationToken(userLogin.email(), userLogin.password()));
         return new Token(tokenService.generateToken(authentication));
     }
     

@@ -22,6 +22,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -65,18 +67,17 @@ public class SecurityConfig {
         JWKSet jwkSet=new JWKSet(rsaKey);
         return (jwkSelector,SecurityContext)->jwkSelector.select(jwkSet);
         }
-    @Bean
-    public InMemoryUserDetailsManager users() {
-    UserDetails user = User
-        .withUsername("admin")
-        .password("{noop}password") // {noop} = no password encoder
-        .authorities("read")
-        .build();
-    return new InMemoryUserDetailsManager(user);
-}
+
+        //for paswword encoder
+        @Bean
+        public static PasswordEncoder passwordEncoder(){
+            return new BCryptPasswordEncoder();
+        }
+
     @Bean
     public AuthenticationManager authManager(UserDetailsService userDetailsService){
         var authProvider=new DaoAuthenticationProvider();
+        authProvider.setPasswordEncoder(passwordEncoder());
         authProvider.setUserDetailsService(userDetailsService);
         return new ProviderManager((authProvider));
     }
@@ -96,10 +97,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+             .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/db-console/**") // Just for H2 Console
+            )
+            .headers(headers -> headers
+                .frameOptions(frame -> frame.disable()) // Just for H2 Console
+            )
+            // .headers().frameOptions().sameOrigin()
             .securityMatcher("/**")
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/test").authenticated()
-                .requestMatchers("/", "/token", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .requestMatchers("/", "/token", "/swagger-ui/**", "/v3/api-docs/**","/db-console/**").permitAll()
                 .anyRequest().permitAll()
             )
             .oauth2ResourceServer(oauth2 -> oauth2

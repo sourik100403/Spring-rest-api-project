@@ -2,3 +2,6 @@
 2 spring configuration processor
 3 lombork
 4 spring web 
+5 for database connect spring jpa for sql
+6 h2 database
+7 validation
