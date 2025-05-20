@@ -11,7 +11,10 @@ import com.spring.springRestDemo.service.TokenService;
 import com.spring.springRestDemo.util.constants.AccountError;
 import com.spring.springRestDemo.util.constants.AccountSuccess;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +47,7 @@ public class AuthController {
     }
  @PostMapping("/token")
  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<TokenDTO> token(@RequestBody UserLoginDTO userLogin) throws AuthenticationException {
+  public ResponseEntity<TokenDTO> token(@Valid @RequestBody UserLoginDTO userLogin) throws AuthenticationException {
     try {
         Authentication authentication=authenticationManager
         .authenticate(new UsernamePasswordAuthenticationToken(userLogin.getEmail(), userLogin.getPassword()));
@@ -54,13 +57,16 @@ public class AuthController {
         return new ResponseEntity<>(new TokenDTO(null),HttpStatus.BAD_REQUEST);
     }
      
-    }
+}
     
 
     //add user api
-    @PostMapping("/users/add")
-     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> addUser(@RequestBody AccountTDO accountTDO){
+    @PostMapping(value="/users/add",consumes = "application/json",produces = "application/json")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiResponse(responseCode = "400",description = "please enter a valid email and password length between 6 to 20 character")
+    @ApiResponse(responseCode = "201",description = "account added")
+    @Operation(summary = "Add a new user")
+    public ResponseEntity<String> addUser(@Valid @RequestBody AccountTDO accountTDO){
         try{
             Account account=new Account();
             account.setEmail(accountTDO.getEmail());
