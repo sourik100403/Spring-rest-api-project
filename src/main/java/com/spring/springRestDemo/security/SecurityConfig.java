@@ -1,14 +1,27 @@
 package com.spring.springRestDemo.security;
 
 
+
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -17,41 +30,66 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
-import com.spring.springRestDemo.config.RsaKeyProperties;
+
+import io.micrometer.observation.Observation.Context;
+
+import org.springframework.core.io.ClassPathResource;
+import java.security.KeyFactory;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
+
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
+
+
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private final RsaKeyProperties rsaKeys;
-    public SecurityConfig(RsaKeyProperties rsaKeys){
-        this.rsaKeys=rsaKeys;
-    }
-
+  
+     private RSAKey rsaKey;
+    @Bean
+    public JWKSource<SecurityContext>jwkSource(){
+        rsaKey= Jwks.generateRsa();
+        JWKSet jwkSet=new JWKSet(rsaKey);
+        return (jwkSelector,SecurityContext)->jwkSelector.select(jwkSet);
+        }
     @Bean
     public InMemoryUserDetailsManager users() {
     UserDetails user = User
         .withUsername("admin")
         .password("{noop}password") // {noop} = no password encoder
-        .roles("USER")
+        .authorities("read")
         .build();
     return new InMemoryUserDetailsManager(user);
 }
-
-     @Bean
-    public JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withPublicKey(rsaKeys.publicKey()).build();
+    @Bean
+    public AuthenticationManager authManager(UserDetailsService userDetailsService){
+        var authProvider=new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        return new ProviderManager((authProvider));
     }
 
+     @Bean
+    public JwtDecoder jwtDecoder()  throws JOSEException{
+        return NimbusJwtDecoder.withPublicKey(rsaKey.toRSAPublicKey()).build();
+
+    }
+
+
     @Bean
-    JwtEncoder jwtEncoder(){
-        JWK jwk=new RSAKey.Builder(rsaKeys.publicKey()).privateKey(rsaKeys.privateKey()).build();
-        JWKSource<SecurityContext> jwks=new ImmutableJWKSet<>(new JWKSet(jwk));
+    JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwks) {
         return new NimbusJwtEncoder(jwks);
     }
 
@@ -76,3 +114,123 @@ public class SecurityConfig {
         return http.build();
     }
 }
+
+
+// package com.spring.springRestDemo.security;
+
+// import java.security.KeyFactory;
+// import java.security.interfaces.RSAPrivateKey;
+// import java.security.interfaces.RSAPublicKey;
+// import java.security.spec.PKCS8EncodedKeySpec;
+// import java.security.spec.X509EncodedKeySpec;
+// import java.util.Base64;
+
+// import org.springframework.context.annotation.Bean;
+// import org.springframework.context.annotation.Configuration;
+// import org.springframework.core.io.ClassPathResource;
+// import org.springframework.core.io.Resource;
+// import org.springframework.security.authentication.AuthenticationManager;
+// import org.springframework.security.authentication.ProviderManager;
+// import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+// import org.springframework.security.config.Customizer;
+// import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+// import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+// import org.springframework.security.config.http.SessionCreationPolicy;
+// import org.springframework.security.core.userdetails.User;
+// import org.springframework.security.core.userdetails.UserDetails;
+// import org.springframework.security.core.userdetails.UserDetailsService;
+// import org.springframework.security.oauth2.jwt.JwtDecoder;
+// import org.springframework.security.oauth2.jwt.JwtEncoder;
+// import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+// import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+// import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+// import org.springframework.security.web.SecurityFilterChain;
+
+// import com.nimbusds.jose.jwk.RSAKey;
+// import com.nimbusds.jose.jwk.JWKSet;
+// import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+// import com.nimbusds.jose.jwk.source.JWKSource;
+// import com.nimbusds.jose.proc.SecurityContext;
+
+// @Configuration
+// @EnableWebSecurity
+// public class SecurityConfig {
+
+//     @Bean
+//     public InMemoryUserDetailsManager users() {
+//         UserDetails user = User
+//             .withUsername("admin")
+//             .password("{noop}password") // {noop} means no encoding
+//             .authorities("read")
+//             .build();
+//         return new InMemoryUserDetailsManager(user);
+//     }
+
+//     @Bean
+//     public AuthenticationManager authManager(UserDetailsService userDetailsService) {
+//         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+//         authProvider.setUserDetailsService(userDetailsService);
+//         return new ProviderManager(authProvider);
+//     }
+
+//     @Bean
+//     public JwtDecoder jwtDecoder() throws Exception {
+//         RSAPublicKey publicKey = getPublicKey("certs/public.pem");
+//         return NimbusJwtDecoder.withPublicKey(publicKey).build();
+//     }
+
+//     @Bean
+//     public JwtEncoder jwtEncoder() throws Exception {
+//         RSAPublicKey publicKey = getPublicKey("certs/public.pem");
+//         RSAPrivateKey privateKey = getPrivateKey("certs/private.pem");
+
+//         RSAKey rsaKey = new RSAKey.Builder(publicKey)
+//             .privateKey(privateKey)
+//             .build();
+
+//         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(rsaKey));
+//         return new NimbusJwtEncoder(jwks);
+//     }
+
+//     private RSAPublicKey getPublicKey(String path) throws Exception {
+//         Resource resource = new ClassPathResource(path);
+//         String key = new String(resource.getInputStream().readAllBytes())
+//             .replace("-----BEGIN PUBLIC KEY-----", "")
+//             .replace("-----END PUBLIC KEY-----", "")
+//             .replaceAll("\\s+", "");
+
+//         byte[] decoded = Base64.getDecoder().decode(key);
+//         X509EncodedKeySpec spec = new X509EncodedKeySpec(decoded);
+//         KeyFactory kf = KeyFactory.getInstance("RSA");
+//         return (RSAPublicKey) kf.generatePublic(spec);
+//     }
+
+//     private RSAPrivateKey getPrivateKey(String path) throws Exception {
+//         Resource resource = new ClassPathResource(path);
+//         String key = new String(resource.getInputStream().readAllBytes())
+//             .replace("-----BEGIN PRIVATE KEY-----", "")
+//             .replace("-----END PRIVATE KEY-----", "")
+//             .replaceAll("\\s+", "");
+
+//         byte[] decoded = Base64.getDecoder().decode(key);
+//         PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(decoded);
+//         KeyFactory kf = KeyFactory.getInstance("RSA");
+//         return (RSAPrivateKey) kf.generatePrivate(spec);
+//     }
+
+//     @Bean
+//     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//         http
+//             .authorizeHttpRequests(auth -> auth
+//                 .requestMatchers("/test").authenticated()
+//                 .requestMatchers("/", "/token", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+//                 .anyRequest().permitAll()
+//             )
+//             .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+//             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//             .httpBasic(Customizer.withDefaults())
+//             .csrf(csrf -> csrf.disable());
+
+//         return http.build();
+//     }
+// }
