@@ -3,9 +3,10 @@ package com.spring.springRestDemo.payload.auth;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
 @Setter
-public class UserLoginDTO{
+@Getter
+public class AccountTDO {
     private String email;
     private String password;
+
 }
