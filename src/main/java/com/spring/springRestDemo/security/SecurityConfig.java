@@ -83,14 +83,15 @@ public class SecurityConfig {
             .securityMatcher("/**")
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/test").authenticated()
-                .requestMatchers("/auth/users").hasAuthority("SCOPE_ADMIN")
-                .requestMatchers("/users/{user_id}/update-authorities").hasAuthority("SCOPE_ADMIN")
-                .requestMatchers("/auth/profile").authenticated()
-                .requestMatchers("/auth/profile/update-password").authenticated()
-                .requestMatchers("/auth/updatepassword").authenticated()
+                .requestMatchers("/api/v1/auth/users").hasAuthority("SCOPE_ADMIN")
+                .requestMatchers("/api/v1/users/{user_id}/update-authorities").hasAuthority("SCOPE_ADMIN")
+                .requestMatchers("/api/v1/auth/profile").authenticated()
+                .requestMatchers("/api/v1/auth/profile/delete").authenticated()
+                .requestMatchers("/api/v1/auth/profile/update-password").authenticated()
+                .requestMatchers("/api/v1/auth/updatepassword").authenticated()
                 .requestMatchers("/", 
-                "/auth/token", 
-                "/auth/users/add", 
+                "/api/v1/auth/token", 
+                "/api/v1/auth/users/add", 
                 "/swagger-ui/**", 
                 "/v3/api-docs/**",
                 "/db-console/**"

@@ -34,6 +34,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,7 +45,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 @Tag(name="Auth Controller",description="controller for account management")
 @Slf4j
 public class AuthController {
@@ -202,5 +203,25 @@ public ResponseEntity<String> updatePassword(@Valid @RequestBody UpdatePasswordD
 }
 
 
+
+//for delete profile
+@DeleteMapping(value="/profile/delete")
+@Operation(summary = "Delete Profile")
+@ApiResponse(responseCode = "200", description = "Password updated successfully")
+@ApiResponse(responseCode = "400", description = "Invalid old password or update failed")
+@ApiResponse(responseCode = "401", description = "token missing")
+@ApiResponse(responseCode = "403", description = "token error")
+@SecurityRequirement(name = "sourikspring-demo")
+public ResponseEntity<String> deleteProfile(Authentication authentication) {
+        String email = authentication.getName();
+        Optional<Account> optionalAccount = accountService.findByEmail(email);
+        if(optionalAccount.isPresent()){
+            accountService.deleteById(optionalAccount.get().getId());
+             return ResponseEntity.ok("user delete successfully.");
+
+        }
+       return new ResponseEntity<String>("BAD REQUEST",HttpStatus.BAD_REQUEST);
+
+}
     
 }

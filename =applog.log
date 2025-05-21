@@ -903,3 +903,82 @@ Caused by: java.lang.ClassNotFoundException: UpdatePasswordDTO
 2025-05-21 11:45:02,240 [INFO] org.springframework.web.servlet.DispatcherServlet {http-nio-8080-exec-1} Initializing Servlet 'dispatcherServlet'
 2025-05-21 11:45:02,244 [INFO] org.springframework.web.servlet.DispatcherServlet {http-nio-8080-exec-1} Completed initialization in 2 ms
 2025-05-21 11:45:04,817 [INFO] org.springdoc.api.AbstractOpenApiResource {http-nio-8080-exec-4} Init duration for springdoc-openapi is: 889 ms
+2025-05-21 12:06:37,393 [INFO] com.spring.springRestDemo.SpringRestDemoApplication {main} Starting SpringRestDemoApplication using Java 21.0.4 with PID 5704 (C:\Users\USER\Downloads\springRestDemo\target\classes started by USER in C:\Users\USER\Downloads\springRestDemo)
+2025-05-21 12:06:37,400 [DEBUG] com.spring.springRestDemo.SpringRestDemoApplication {main} Running with Spring Boot v3.4.5, Spring v6.2.6
+2025-05-21 12:06:37,404 [INFO] com.spring.springRestDemo.SpringRestDemoApplication {main} No active profile set, falling back to 1 default profile: "default"
+2025-05-21 12:06:43,748 [INFO] org.springframework.data.repository.config.RepositoryConfigurationDelegate {main} Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-21 12:06:44,034 [INFO] org.springframework.data.repository.config.RepositoryConfigurationDelegate {main} Finished Spring Data repository scanning in 216 ms. Found 1 JPA repository interface.
+2025-05-21 12:06:48,224 [INFO] org.springframework.boot.web.embedded.tomcat.TomcatWebServer {main} Tomcat initialized with port 8080 (http)
+2025-05-21 12:06:48,304 [INFO] org.apache.catalina.core.StandardService {main} Starting service [Tomcat]
+2025-05-21 12:06:48,311 [INFO] org.apache.catalina.core.StandardEngine {main} Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-21 12:06:48,652 [INFO] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] {main} Initializing Spring embedded WebApplicationContext
+2025-05-21 12:06:48,654 [INFO] org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext {main} Root WebApplicationContext: initialization completed in 11079 ms
+2025-05-21 12:06:50,932 [INFO] org.hibernate.jpa.internal.util.LogHelper {main} HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-21 12:06:51,288 [INFO] org.hibernate.Version {main} HHH000412: Hibernate ORM core version 6.6.13.Final
+2025-05-21 12:06:51,455 [INFO] org.hibernate.cache.internal.RegionFactoryInitiator {main} HHH000026: Second-level cache disabled
+2025-05-21 12:06:52,778 [INFO] org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo {main} No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-21 12:06:52,922 [INFO] com.zaxxer.hikari.HikariDataSource {main} HikariPool-1 - Starting...
+2025-05-21 12:06:53,572 [INFO] com.zaxxer.hikari.pool.HikariPool {main} HikariPool-1 - Added connection conn0: url=jdbc:h2:file:./db/blogdb user=ADMIN
+2025-05-21 12:06:53,577 [INFO] com.zaxxer.hikari.HikariDataSource {main} HikariPool-1 - Start completed.
+2025-05-21 12:06:53,656 [WARN] org.hibernate.orm.deprecation {main} HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-05-21 12:06:53,722 [INFO] org.hibernate.orm.connections.pooling {main} HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 2.3.232
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-21 12:06:57,130 [INFO] org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator {main} HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-21 12:06:57,229 [INFO] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean {main} Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-21 12:07:03,325 [WARN] org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration {main} spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-21 12:07:03,457 [INFO] org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer {main} Global AuthenticationManager configured with UserDetailsService bean with name accountService
+2025-05-21 12:07:06,538 [INFO] org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver {main} Exposing 1 endpoint beneath base path '/actuator'
+2025-05-21 12:07:09,732 [INFO] org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration {main} H2 console available at '/db-console'. Database available at 'jdbc:h2:file:./db/blogdb'
+2025-05-21 12:07:10,240 [INFO] org.springframework.boot.web.embedded.tomcat.TomcatWebServer {main} Tomcat started on port 8080 (http) with context path '/'
+2025-05-21 12:07:10,372 [INFO] com.spring.springRestDemo.SpringRestDemoApplication {main} Started SpringRestDemoApplication in 35.469 seconds (process running for 38.496)
+2025-05-21 12:08:13,727 [INFO] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] {http-nio-8080-exec-1} Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-21 12:08:13,728 [INFO] org.springframework.web.servlet.DispatcherServlet {http-nio-8080-exec-1} Initializing Servlet 'dispatcherServlet'
+2025-05-21 12:08:13,731 [INFO] org.springframework.web.servlet.DispatcherServlet {http-nio-8080-exec-1} Completed initialization in 2 ms
+2025-05-21 12:08:17,044 [INFO] org.springdoc.api.AbstractOpenApiResource {http-nio-8080-exec-3} Init duration for springdoc-openapi is: 1037 ms
+2025-05-21 12:11:30,773 [DEBUG] com.spring.springRestDemo.controller.AuthController {http-nio-8080-exec-3} TOKEN_GENERATION_ERROR: Bad credentials
+2025-05-21 12:18:27,586 [INFO] com.spring.springRestDemo.SpringRestDemoApplication {main} Starting SpringRestDemoApplication using Java 21.0.4 with PID 9176 (C:\Users\USER\Downloads\springRestDemo\target\classes started by USER in C:\Users\USER\Downloads\springRestDemo)
+2025-05-21 12:18:27,598 [DEBUG] com.spring.springRestDemo.SpringRestDemoApplication {main} Running with Spring Boot v3.4.5, Spring v6.2.6
+2025-05-21 12:18:27,605 [INFO] com.spring.springRestDemo.SpringRestDemoApplication {main} No active profile set, falling back to 1 default profile: "default"
+2025-05-21 12:18:33,991 [INFO] org.springframework.data.repository.config.RepositoryConfigurationDelegate {main} Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-21 12:18:34,216 [INFO] org.springframework.data.repository.config.RepositoryConfigurationDelegate {main} Finished Spring Data repository scanning in 195 ms. Found 1 JPA repository interface.
+2025-05-21 12:18:38,426 [INFO] org.springframework.boot.web.embedded.tomcat.TomcatWebServer {main} Tomcat initialized with port 8080 (http)
+2025-05-21 12:18:38,469 [INFO] org.apache.catalina.core.StandardService {main} Starting service [Tomcat]
+2025-05-21 12:18:38,471 [INFO] org.apache.catalina.core.StandardEngine {main} Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-21 12:18:38,737 [INFO] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] {main} Initializing Spring embedded WebApplicationContext
+2025-05-21 12:18:38,738 [INFO] org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext {main} Root WebApplicationContext: initialization completed in 10835 ms
+2025-05-21 12:18:40,249 [INFO] org.hibernate.jpa.internal.util.LogHelper {main} HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-21 12:18:40,523 [INFO] org.hibernate.Version {main} HHH000412: Hibernate ORM core version 6.6.13.Final
+2025-05-21 12:18:40,707 [INFO] org.hibernate.cache.internal.RegionFactoryInitiator {main} HHH000026: Second-level cache disabled
+2025-05-21 12:18:42,051 [INFO] org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo {main} No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-21 12:18:42,147 [INFO] com.zaxxer.hikari.HikariDataSource {main} HikariPool-1 - Starting...
+2025-05-21 12:18:42,939 [INFO] com.zaxxer.hikari.pool.HikariPool {main} HikariPool-1 - Added connection conn0: url=jdbc:h2:file:./db/blogdb user=ADMIN
+2025-05-21 12:18:42,947 [INFO] com.zaxxer.hikari.HikariDataSource {main} HikariPool-1 - Start completed.
+2025-05-21 12:18:43,046 [WARN] org.hibernate.orm.deprecation {main} HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-05-21 12:18:43,126 [INFO] org.hibernate.orm.connections.pooling {main} HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 2.3.232
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-21 12:18:45,558 [INFO] org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator {main} HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-21 12:18:45,663 [INFO] org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean {main} Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-21 12:18:51,052 [WARN] org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration {main} spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-21 12:18:51,269 [INFO] org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer {main} Global AuthenticationManager configured with UserDetailsService bean with name accountService
+2025-05-21 12:18:55,198 [INFO] org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver {main} Exposing 1 endpoint beneath base path '/actuator'
+2025-05-21 12:18:59,007 [INFO] org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration {main} H2 console available at '/db-console'. Database available at 'jdbc:h2:file:./db/blogdb'
+2025-05-21 12:18:59,879 [INFO] org.springframework.boot.web.embedded.tomcat.TomcatWebServer {main} Tomcat started on port 8080 (http) with context path '/'
+2025-05-21 12:18:59,965 [INFO] com.spring.springRestDemo.SpringRestDemoApplication {main} Started SpringRestDemoApplication in 35.081 seconds (process running for 37.311)
+2025-05-21 12:19:00,253 [INFO] org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/] {RMI TCP Connection(2)-127.0.0.1} Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-21 12:19:00,256 [INFO] org.springframework.web.servlet.DispatcherServlet {RMI TCP Connection(2)-127.0.0.1} Initializing Servlet 'dispatcherServlet'
+2025-05-21 12:19:00,261 [INFO] org.springframework.web.servlet.DispatcherServlet {RMI TCP Connection(2)-127.0.0.1} Completed initialization in 4 ms
+2025-05-21 12:21:33,348 [INFO] org.springdoc.api.AbstractOpenApiResource {http-nio-8080-exec-3} Init duration for springdoc-openapi is: 841 ms
+2025-05-21 12:23:18,434 [DEBUG] com.spring.springRestDemo.controller.AuthController {http-nio-8080-exec-2} TOKEN_GENERATION_ERROR: Bad credentials
+2025-05-21 12:23:46,490 [WARN] org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver {http-nio-8080-exec-4} Resolved [org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [0] in public org.springframework.http.ResponseEntity<java.lang.String> com.spring.springRestDemo.controller.AuthController.addUser(com.spring.springRestDemo.payload.auth.AccountTDO): [Field error in object 'accountTDO' on field 'email': rejected value [sourik12gmail.com]; codes [Email.accountTDO.email,Email.email,Email.java.lang.String,Email]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [accountTDO.email,email]; arguments []; default message [email],[Ljakarta.validation.constraints.Pattern$Flag;@5f40beb0,.*]; default message [must be a well-formed email address]] ]

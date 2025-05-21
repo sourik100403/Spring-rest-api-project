@@ -51,6 +51,11 @@ public class AccountService implements UserDetailsService{
     public Optional<Account> findById(long id){
         return accountRepository.findById(id);
     }
+
+    public void deleteById(long id){
+        accountRepository.deleteById(id);
+    }
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<Account> optionalAccount=accountRepository.findByEmail(email);
