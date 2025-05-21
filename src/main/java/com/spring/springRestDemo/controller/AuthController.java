@@ -5,8 +5,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.spring.springRestDemo.model.Account;
 import com.spring.springRestDemo.payload.auth.AccountTDO;
 import com.spring.springRestDemo.payload.auth.AccountViewDTO;
+import com.spring.springRestDemo.payload.auth.AuthoritiesDTO;
+import com.spring.springRestDemo.payload.auth.PasswordDTO;
 import com.spring.springRestDemo.payload.auth.ProfileDTO;
 import com.spring.springRestDemo.payload.auth.TokenDTO;
+import com.spring.springRestDemo.payload.auth.UpdatePasswordDTO;
 import com.spring.springRestDemo.payload.auth.UserLoginDTO;
 import com.spring.springRestDemo.service.AccountService;
 import com.spring.springRestDemo.service.TokenService;
@@ -32,7 +35,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -107,6 +112,28 @@ public class AuthController {
     }
 
 
+
+//for update authorities role
+@PutMapping(value="/users/{user_id}/update-authorities", produces = "application/json",consumes="application/json")
+@Operation(summary = "Update user authorities")
+@ApiResponse(responseCode = "200", description = "authorities updated successfully")
+@ApiResponse(responseCode = "400", description = "Invalid ID")
+@ApiResponse(responseCode = "401", description = "token missing")
+@ApiResponse(responseCode = "403", description = "token error")
+@SecurityRequirement(name = "sourikspring-demo")
+public ResponseEntity<AccountViewDTO> update_auth(@Valid @RequestBody AuthoritiesDTO authoritiesDTO,@PathVariable long user_id) {
+        Optional<Account> optionalAccount = accountService.findById(user_id);
+        if(optionalAccount.isPresent()){
+            Account account=optionalAccount.get();
+            account.setAuthorities(authoritiesDTO.getAuthorities());
+            accountService.save(account);
+            AccountViewDTO accountViewDTO=new AccountViewDTO(account.getId(),account.getEmail(),account.getAuthorities());
+            return ResponseEntity.ok(accountViewDTO);
+        }
+        return new ResponseEntity<AccountViewDTO>(new AccountViewDTO(),HttpStatus.BAD_REQUEST);
+}
+
+
      //get PROFILE
     @GetMapping(value="/profile",produces = "application/json")
     @Operation(summary = "view profile")
@@ -117,14 +144,63 @@ public class AuthController {
     public ProfileDTO profile(Authentication authentication){
         String email=authentication.getName();
         Optional<Account> optionalAccount=accountService.findByEmail(email);
-        if(optionalAccount.isPresent()){
-            Account account=optionalAccount.get();
-            ProfileDTO profileDTO=new ProfileDTO(account.getId(), account.getEmail(),account.getAuthorities());
-            return profileDTO;
-        }
+        Account account=optionalAccount.get();
+        ProfileDTO profileDTO=new ProfileDTO(account.getId(), account.getEmail(),account.getAuthorities());
+        return profileDTO;
 
-        return null;
 
     }
+//for update password
+@PutMapping(value="/profile/update-password", produces = "application/json",consumes="application/json")
+@Operation(summary = "Update profile password")
+@ApiResponse(responseCode = "200", description = "Password updated successfully")
+@ApiResponse(responseCode = "400", description = "Invalid old password or update failed")
+@ApiResponse(responseCode = "401", description = "token missing")
+@ApiResponse(responseCode = "403", description = "token error")
+@SecurityRequirement(name = "sourikspring-demo")
+public AccountViewDTO updatePassword(@Valid @RequestBody PasswordDTO passwordDTO, Authentication authentication) {
+        String email = authentication.getName();
+        Optional<Account> optionalAccount = accountService.findByEmail(email);
+        Account account=optionalAccount.get();
+        account.setPassword(passwordDTO.getPassword());
+        accountService.save(account);
+        AccountViewDTO accountViewDTO=new AccountViewDTO(account.getId(),account.getEmail(),account.getAuthorities());
+        return accountViewDTO;
+
+}
+
+//pasword update with old and new pasword
+@PostMapping("/updatepassword")
+@Operation(summary = "Update user password")
+@ApiResponse(responseCode = "200", description = "Password updated successfully")
+@ApiResponse(responseCode = "400", description = "Invalid old password or update failed")
+@ApiResponse(responseCode = "401", description = "Unauthorized")
+@SecurityRequirement(name = "sourikspring-demo")
+public ResponseEntity<String> updatePassword(@Valid @RequestBody UpdatePasswordDTO updatePasswordDTO, Authentication authentication) {
+    try {
+        String email = authentication.getName();
+        Optional<Account> optionalAccount = accountService.findByEmail(email);
+
+        if (optionalAccount.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found.");
+        }
+
+        Account account = optionalAccount.get();
+
+        if (!accountService.matches(updatePasswordDTO.getOldPassword(), account.getPassword())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Old password is incorrect.");
+        }
+
+        account.setPassword(updatePasswordDTO.getNewPassword());
+        accountService.save(account);
+
+        return ResponseEntity.ok("Password updated successfully.");
+    } catch (Exception e) {
+        log.error("Error updating password: " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to update password.");
+    }
+}
+
+
     
 }

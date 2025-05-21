@@ -84,7 +84,10 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/test").authenticated()
                 .requestMatchers("/auth/users").hasAuthority("SCOPE_ADMIN")
+                .requestMatchers("/users/{user_id}/update-authorities").hasAuthority("SCOPE_ADMIN")
                 .requestMatchers("/auth/profile").authenticated()
+                .requestMatchers("/auth/profile/update-password").authenticated()
+                .requestMatchers("/auth/updatepassword").authenticated()
                 .requestMatchers("/", 
                 "/auth/token", 
                 "/auth/users/add", 
