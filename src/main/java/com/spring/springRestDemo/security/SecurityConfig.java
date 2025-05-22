@@ -89,7 +89,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/profile/delete").authenticated()
                 .requestMatchers("/api/v1/auth/profile/update-password").authenticated()
                 .requestMatchers("/api/v1/auth/updatepassword").authenticated()
-                .requestMatchers("/", 
+                .requestMatchers("/**", 
                 "/api/v1/auth/token", 
                 "/api/v1/auth/users/add", 
                 "/swagger-ui/**", 
