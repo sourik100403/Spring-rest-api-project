@@ -2,12 +2,18 @@ package com.spring.springRestDemo.controller;
 
 import org.springframework.security.core.Authentication;
 
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.spring.springRestDemo.model.Account;
 import com.spring.springRestDemo.model.Album;
@@ -49,6 +54,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AlbumController {
 
+
+    //forresize the file
+    static final String PHOTOS_FOLDER_NAME="photos";
+    static final String THUMBNAIL_FOLDER_NAME="thumbnails";
+    static final int THUMBNAIL_WIDTH=300;
 
     @Autowired
     private AccountService accountService;
@@ -112,7 +122,7 @@ public class AlbumController {
     @ApiResponse(responseCode = "201", description = "Unauthorized")
     @Operation(summary = "upload photo in album")
     @SecurityRequirement(name = "sourikspring-demo")
-    public ResponseEntity<List<String>> photos(@RequestPart(required = true) MultipartFile[] files,@PathVariable long album_id,Authentication authentication){
+    public ResponseEntity<List<HashMap<String,List<String>>>> photos(@RequestPart(required = true) MultipartFile[] files,@PathVariable long album_id,Authentication authentication){
         String email=authentication.getName();
          Optional<Account> optionalAccount=accountService.findByEmail(email);
          Account account=optionalAccount.get();
@@ -148,7 +158,7 @@ public class AlbumController {
                 String filename=file.getOriginalFilename();
                 String generatedString=RandomStringUtils.random(length,useLetter,useNumbers);
                 String final_photo_name=generatedString+filename;
-                String absolute_fileLocation=AppUtil.get_photo_upload_path(final_photo_name, album_id);
+                String absolute_fileLocation=AppUtil.get_photo_upload_path(final_photo_name,PHOTOS_FOLDER_NAME, album_id);
                 Path path=Paths.get(absolute_fileLocation);
                 Files.copy(file.getInputStream(),path,StandardCopyOption.REPLACE_EXISTING);
 
@@ -160,15 +170,30 @@ public class AlbumController {
                 photo.setAlbum(album);
                 photoService.save(photo);
 
+        //for this use for thumbnail or resize image for first web page loading
+                BufferedImage thumbImg=AppUtil.getThumbnail(file, THUMBNAIL_WIDTH);
+                File thumbnail_location=new File(AppUtil.get_photo_upload_path(final_photo_name, THUMBNAIL_FOLDER_NAME, album_id));
+                ImageIO.write(thumbImg,file.getContentType().split("/")[1],thumbnail_location);
+
             } catch (Exception e) {
-                // TODO: handle exception
+                log.debug(AlbumError.PHOTO_UPLOAD_ERROR.toString()+": "+e.getMessage());
+                fileNamesWithError.add(file.getOriginalFilename());
             }
            }
            else{
             fileNamesWithError.add(file.getOriginalFilename());
            }
+
          });
-        return ResponseEntity.ok(fileNamesWithSuccess);
+         
+           //for showing error msg
+           HashMap<String,List<String>> result=new HashMap<>();
+           result.put("SUCCESS",fileNamesWithSuccess);
+           result.put("ERRORS",fileNamesWithError);
+
+           List<HashMap<String,List<String>>> response=new ArrayList<>();
+           response.add(result);
+        return ResponseEntity.ok(response);
     }
    
 
