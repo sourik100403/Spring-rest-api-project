@@ -27,10 +27,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.spring.springRestDemo.model.Account;
 import com.spring.springRestDemo.model.Album;
+import com.spring.springRestDemo.model.Photo;
 import com.spring.springRestDemo.payload.auth.album.AlbumPayloadDTO;
 import com.spring.springRestDemo.payload.auth.album.AlbumViewDTO;
 import com.spring.springRestDemo.service.AccountService;
 import com.spring.springRestDemo.service.AlbumService;
+import com.spring.springRestDemo.service.PhotoService;
 import com.spring.springRestDemo.util.AppUtils.AppUtil;
 import com.spring.springRestDemo.util.constants.AlbumError;
 
@@ -42,7 +44,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/api/v1/albums")
+@RequestMapping("/api/v1")
 @Tag(name="Album  Controller",description="controller for album and photo management")
 @Slf4j
 public class AlbumController {
@@ -53,8 +55,12 @@ public class AlbumController {
 
     @Autowired
     private AlbumService albumService;
+
+    @Autowired
+    private PhotoService photoService;
+
 //api for add album
-    @PostMapping(value="/add",produces = "application/json",consumes="application/json")
+    @PostMapping(value="/albums/add",produces = "application/json",consumes="application/json")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiResponse(responseCode = "400", description = "please add valid name a descripton")
     @ApiResponse(responseCode = "201", description = "Invalid ID")
@@ -81,7 +87,7 @@ public class AlbumController {
 
 
 //view all album
-    @GetMapping(value="/",produces = "application/json")
+    @GetMapping(value="/albums",produces = "application/json")
     @ApiResponse(responseCode = "200", description = "List of album")
     @ApiResponse(responseCode = "400", description = "please add valid name a descripton")
     @ApiResponse(responseCode = "201", description = "Invalid ID")
@@ -100,7 +106,7 @@ public class AlbumController {
 
 
 //photo upload api
-    @PostMapping(value="/{album_id}/upload-photos",consumes={"multipart/form-data"},produces = "application/json")
+    @PostMapping(value="/albums/{album_id}/upload-photos",consumes={"multipart/form-data"},produces = "application/json")
     @ApiResponse(responseCode = "200", description = "Succesfully photo upload in album")
     @ApiResponse(responseCode = "400", description = "please check the payload or token")
     @ApiResponse(responseCode = "201", description = "Unauthorized")
@@ -145,12 +151,24 @@ public class AlbumController {
                 String absolute_fileLocation=AppUtil.get_photo_upload_path(final_photo_name, album_id);
                 Path path=Paths.get(absolute_fileLocation);
                 Files.copy(file.getInputStream(),path,StandardCopyOption.REPLACE_EXISTING);
+
+         //now start to here how to save photo new photo database 
+                Photo photo=new Photo();
+                photo.setName(filename);
+                photo.setFileName(final_photo_name);
+                photo.setOriginalFileName(filename);
+                photo.setAlbum(album);
+                photoService.save(photo);
+
             } catch (Exception e) {
                 // TODO: handle exception
             }
            }
+           else{
+            fileNamesWithError.add(file.getOriginalFilename());
+           }
          });
-        return null;
+        return ResponseEntity.ok(fileNamesWithSuccess);
     }
    
 
