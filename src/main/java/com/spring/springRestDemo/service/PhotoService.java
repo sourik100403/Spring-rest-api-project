@@ -1,5 +1,7 @@
 package com.spring.springRestDemo.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,4 +18,7 @@ public class PhotoService {
         return photoRepository.save(photo);
     }
     
+    public Optional<Photo> findById(long id){
+        return photoRepository.findById(id);
+    }
 }

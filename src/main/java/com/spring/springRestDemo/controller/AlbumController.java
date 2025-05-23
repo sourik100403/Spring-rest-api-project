@@ -7,6 +7,8 @@ import javax.imageio.ImageIO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
+// import java.net.http.HttpHeaders;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,10 +18,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.http.HttpHeaders;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.spring.springRestDemo.model.Account;
 import com.spring.springRestDemo.model.Album;
 import com.spring.springRestDemo.model.Photo;
@@ -198,5 +202,54 @@ public class AlbumController {
    
 
 
+//downlaod image api
+    @GetMapping("/albums/{album_id}/photos/{photo_id}/download-photo")
+    @ApiResponse(responseCode = "200", description = "Succesfully photo download")
+    @ApiResponse(responseCode = "400", description = "please check the payload or token")
+    @ApiResponse(responseCode = "201", description = "Unauthorized")
+    @Operation(summary = "Download photo in album")
+    @SecurityRequirement(name = "sourikspring-demo")
+    public ResponseEntity<?> downloadPhoto(@PathVariable("album_id") long album_id,
+                @PathVariable("photo_id") long photo_id,Authentication authentication){
+
+            //error check login user id or album id matched or not
+                String email=authentication.getName();
+                Optional<Account> optionalAccount=accountService.findByEmail(email);
+                Account account=optionalAccount.get();
+                Optional<Album> optinalAlbum=albumService.findById(album_id);
+                Album album;
+               if(optinalAlbum.isPresent()){
+                 album=optinalAlbum.get();
+                 if(account.getId()!=album.getAccount().getId()){
+                   return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+                }
+              }else{
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+                }
+
+                Optional<Photo> optionalPhoto=photoService.findById(photo_id);
+                if(optionalPhoto.isPresent()){
+                    Photo photo=optionalPhoto.get();
+                    Resource resource=null;
+                    try {
+                        resource=AppUtil.getFileAsResource(album_id, PHOTOS_FOLDER_NAME,photo.getFileName());
+                    } catch (IOException e) {
+                        return ResponseEntity.internalServerError().build();
+                    }
+                    if(resource==null){
+                        return new ResponseEntity<>("File not found",HttpStatus.NOT_FOUND);
+                    }
+                    String contentType="application/octet-stream";
+                    String headerValue="attachment; filename=\""+photo.getOriginalFileName()+"\"";
+
+                return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
+                    .body(resource);
+                }else{
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+                }
+
+            }
 
 }
